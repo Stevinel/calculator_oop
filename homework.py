@@ -1,4 +1,5 @@
 import datetime as dt
+
 DATE_FORMAT = '%d.%m.%Y'
 
 
@@ -42,32 +43,34 @@ class CashCalculator(Calculator):
             'eur': (self.EURO_RATE, 'Euro')
         }
 
-        if currency not in CUR_LIB.keys():
+        if currency not in CUR_LIB:
             return 'Валюта не поддерживается'
 
-        if self.get_remained() == 0:
+        remained = self.get_remained()
+        if remained == 0:
             return 'Денег нет, держись'
 
-        cur = CUR_LIB[currency]
-        remains = round(abs(self.get_remained()) / cur[0], 2)
-        if self.get_remained() > 0:
-            return (f'На сегодня осталось {remains} {cur[1]}')
+        rate, cur_name = CUR_LIB[currency]
+        converted = round(abs(remained) / rate, 2)
+        if remained > 0:
+            return (f'На сегодня осталось {converted} {cur_name}')
         else:
-            return (f'Денег нет, держись: твой долг - {remains} {cur[1]}')
+            return (f'Денег нет, держись: твой долг - {converted} {cur_name}')
 
 
 class CaloriesCalculator(Calculator):
     def get_calories_remained(self):
-        if self.get_remained() > 0:
+        remained = self.get_remained()
+        if remained > 0:
             return (
                 'Сегодня можно съесть что-нибудь ещё, '
-                f'но с общей калорийностью не более {self.get_remained()} кКал'
+                f'но с общей калорийностью не более {remained} кКал'
             )
         else:
             return 'Хватит есть!'
 
 
-class Record():
+class Record:
     def __init__(self, amount, comment, date=None):
         self.amount = amount
         self.comment = comment
